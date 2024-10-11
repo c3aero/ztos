@@ -5,7 +5,7 @@
 ## Key Features
 
 - **iPXE Booting**: Zero-touch deployment into cloud or bare-metal environments.
-- **Custom Linux Distribution**: Networking-focused OS, potentially based on VyOS, optimized for routing and security services.
+- **Custom Linux Distribution**: Networking-focused OS, optimized for routing and security services.
 - **Multi-Layer Encryption**: Layer 2 encryption with **MACsec** and Layer 3 encryption with **WireGuard**.
 - **Containerized Network Services**: Modular and scalable services such as **BGP**, **WireGuard**, and **MACsec**.
 - **Zero Trust Networking**: Continuous authentication and least-privilege access to all network resources.
