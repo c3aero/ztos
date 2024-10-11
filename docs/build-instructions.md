@@ -131,8 +131,7 @@ You can automate this entire build process by creating a **build.sh** script. Th
 Here’s an example **build.sh** script:
 
 ```bash
-#!/bin/bash
-
+!/bin/bash
 # Variables
 KERNEL_VERSION="5.15"
 OUTPUT_DIR="$(pwd)/output"
@@ -171,7 +170,6 @@ xorriso -as mkisofs \
 
 echo "Build Complete!"
 
----
 
 ## Conclusion
 
