@@ -26,13 +26,13 @@ ZTOS uses a custom Linux kernel with support for features like BGP, VXLAN, MACse
    make defconfig
    make menuconfig
 
-   - **Enable necessary options**:
-     - **Networking support** (for BGP, VXLAN)
-     - **Security options** (for MACsec and WireGuard)
-     - You may want to enable the following manually:
-       - Go to **Networking options** → **Network support** and select **VXLAN**.
-       - Go to **Cryptographic API** → **MACsec support**.
-       - Enable **WireGuard** in **Networking support** → **Network Device Support**.
+- **Enable necessary options**:
+- **Networking support** (for BGP, VXLAN)
+- **Security options** (for MACsec and WireGuard)
+- You may want to enable the following manually:
+- Go to **Networking options** → **Network support** and select **VXLAN**.
+- Go to **Cryptographic API** → **MACsec support**.
+- Enable **WireGuard** in **Networking support** → **Network Device Support**.
 
 3. Build the kernel:
 	```bash
