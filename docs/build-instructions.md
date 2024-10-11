@@ -164,10 +164,10 @@ Here’s an example **build.sh** script:
 
 	xorriso -as mkisofs \
 	   -o ztos.iso \
-   -b boot/vmlinuz \
-   -c boot/initrd.img \
-   $ISO_DIR/
-
+	   -b boot/vmlinuz \
+	   -c boot/initrd.img \
+	   $ISO_DIR/
+	   
 	echo "Build Complete!"
 
 ## Conclusion
