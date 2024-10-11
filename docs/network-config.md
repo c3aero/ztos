@@ -33,14 +33,17 @@ This guide provides a detailed overview of how to configure the core networking 
 
 ### Steps:
 1. Create VXLAN interface:
+	```bash
    ip link add vxlan0 type vxlan id 42 dev eth0 dstport 4789
    ip addr add 192.168.100.1/24 dev vxlan0
    ip link set up vxlan0
 
 2. Link the VXLAN ID to the corresponding VLAN:
+	```bash
    bridge vlan add vid 10 dev vxlan0
 
 3. Test VXLAN functionality by verifying the tunnel:
+	```bash
    bridge fdb show dev vxlan0
 
 ---
@@ -52,14 +55,17 @@ This guide provides a detailed overview of how to configure the core networking 
 ### Steps:
 1. Install necessary tools for MACsec on the nodes.
 2. Configure MACsec on the interface:
+	```bash
    ip link add link eth0 macsec0 type macsec
    ip macsec add macsec0 tx sa 0 pn 1 on key 01 0123456789abcdef
    ip link set up macsec0
 
 3. Link MACsec to the VXLAN interface:
+	```bash
    ip link set macsec0 master vxlan0
 
 4. Verify MACsec configuration:
+	```bash
    ip macsec show
 
 ---
@@ -71,6 +77,7 @@ This guide provides a detailed overview of how to configure the core networking 
 ### Steps:
 1. Install WireGuard on the nodes.
 2. Create the WireGuard configuration (`wg0.conf`):
+	```bash
    [Interface]
    Address = 10.0.0.1/24
    PrivateKey = YOUR_PRIVATE_KEY
@@ -81,9 +88,11 @@ This guide provides a detailed overview of how to configure the core networking 
    AllowedIPs = 10.0.0.2/32
 
 3. Start the WireGuard interface:
+	```bash
    wg-quick up /etc/wireguard/wg0.conf
 
 4. Verify that the WireGuard connection is active:
+	```bash
    wg show
 
 ---
