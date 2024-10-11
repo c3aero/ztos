@@ -1,0 +1,6 @@
+# iPXE boot script for ZTOS on Equinix Metal
+#!ipxe
+kernel https://ztos.example.com/equinix/kernel boot=zfs root=https://ztos.example.com/equinix/root.img
+initrd https://ztos.example.com/equinix/initrd.img
+boot
+

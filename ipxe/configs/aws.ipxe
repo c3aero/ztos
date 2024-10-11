@@ -1,0 +1,6 @@
+# iPXE boot script for ZTOS on AWS
+#!ipxe
+kernel https://ztos.example.com/aws/kernel boot=zfs root=https://ztos.example.com/aws/root.img
+initrd https://ztos.example.com/aws/initrd.img
+boot
+

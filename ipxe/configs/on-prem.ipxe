@@ -1,0 +1,6 @@
+# iPXE boot script for ZTOS on on-prem hardware
+#!ipxe
+kernel https://ztos.example.com/on-prem/kernel boot=zfs root=https://ztos.example.com/on-prem/root.img
+initrd https://ztos.example.com/on-prem/initrd.img
+boot
+
