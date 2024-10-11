@@ -119,8 +119,6 @@ ZTOS can be booted into **private on-prem hardware** via iPXE, creating a fully 
 
 ### **Conclusion**
 
-**ZTOS** represents the future of **Zero Trust Networking**, providing a robust, scalable, and flexible operating system capable of running across cloud, hybrid, and on-prem infrastructure. With a focus on **
-
-containerization**, **multi-layer encryption**, and **dynamic routing**, ZTOS ensures that all traffic is encrypted, all devices are authenticated, and all tenants are fully isolated.
+**ZTOS** represents the future of **Zero Trust Networking**, providing a robust, scalable, and flexible operating system capable of running across cloud, hybrid, and on-prem infrastructure. With a focus on **containerization**, **multi-layer encryption**, and **dynamic routing**, ZTOS ensures that all traffic is encrypted, all devices are authenticated, and all tenants are fully isolated.
 
 The system is built to scale for enterprises in industries such as **Aerospace**, **Defense**, **Finance**, and **Government**, and provides the tools needed to secure the most sensitive and critical networks.
