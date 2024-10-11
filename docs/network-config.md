@@ -17,12 +17,12 @@ This guide provides a detailed overview of how to configure the core networking 
    neighbor 192.168.1.2 remote-as 64513
    network 192.168.100.0/24
 3. Use EVPN to extend Layer 2 services over BGP by mapping VNI to VLAN:
-```bash
+	```bash
    vni 1001
    vxlan interface vxlan0
 
 4. Test BGP routes:
-```bash
+	```bash
    show ip bgp summary
 
 ---
