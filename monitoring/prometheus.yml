@@ -1,0 +1,10 @@
+global:
+  scrape_interval: 15s
+scrape_configs:
+  - job_name: 'ztos-bgp'
+    static_configs:
+      - targets: ['localhost:9090'] # Placeholder for BGP service
+  - job_name: 'ztos-wireguard'
+    static_configs:
+      - targets: ['localhost:9091'] # Placeholder for WireGuard service
+
