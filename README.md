@@ -28,6 +28,6 @@ ZTOS is currently under active development. The repository includes the initial 
 1. Clone the repository:
 
    ```bash
-   git clone https://github.com/yourusername/ztos-repo.git
-   cd ztos-repo
+   git clone https://github.com/c3aero/ztos.git
+   cd ztos
 
