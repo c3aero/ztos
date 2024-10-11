@@ -130,46 +130,45 @@ You can automate this entire build process by creating a **build.sh** script. Th
 
 Here’s an example **build.sh** script:
 
-```bash
-!/bin/bash
-# Variables
-KERNEL_VERSION="5.15"
-OUTPUT_DIR="$(pwd)/output"
-ISO_DIR="$(pwd)/iso"
+	```bash
+	!/bin/bash
+	# Variables
+	KERNEL_VERSION="5.15"
+	OUTPUT_DIR="$(pwd)/output"
+	ISO_DIR="$(pwd)/iso"
+	
+	# Step 1: Download Kernel Source
+	wget https://cdn.kernel.org/pub/linux/kernel/v5.x/linux-$KERNEL_VERSION.tar.xz
+	tar -xf linux-$KERNEL_VERSION.tar.xz
+	cd linux-$KERNEL_VERSION
 
-# Step 1: Download Kernel Source
-wget https://cdn.kernel.org/pub/linux/kernel/v5.x/linux-$KERNEL_VERSION.tar.xz
-tar -xf linux-$KERNEL_VERSION.tar.xz
-cd linux-$KERNEL_VERSION
+	# Step 2: Build Kernel
+	make defconfig
+	make menuconfig  # Optional: Customize configuration
+	make -j$(nproc)
+	sudo make modules_install
+	sudo make install
 
-# Step 2: Build Kernel
-make defconfig
-make menuconfig  # Optional: Customize configuration
-make -j$(nproc)
-sudo make modules_install
-sudo make install
+	# Step 3: Create Initrd
+	sudo dracut --force /boot/initrd.img-$KERNEL_VERSION
+	
+	# Step 4: Package for Booting
+	mkdir -p $OUTPUT_DIR
+	cp /boot/vmlinuz-$KERNEL_VERSION $OUTPUT_DIR/
+	cp /boot/initrd.img-$KERNEL_VERSION $OUTPUT_DIR/
+	
+	# Step 5: Create ISO (Optional)
+	mkdir -p $ISO_DIR/boot
+	cp $OUTPUT_DIR/vmlinuz-$KERNEL_VERSION $ISO_DIR/boot/vmlinuz
+	cp $OUTPUT_DIR/initrd.img-$KERNEL_VERSION $ISO_DIR/boot/initrd.img
 
-# Step 3: Create Initrd
-sudo dracut --force /boot/initrd.img-$KERNEL_VERSION
-
-# Step 4: Package for Booting
-mkdir -p $OUTPUT_DIR
-cp /boot/vmlinuz-$KERNEL_VERSION $OUTPUT_DIR/
-cp /boot/initrd.img-$KERNEL_VERSION $OUTPUT_DIR/
-
-# Step 5: Create ISO (Optional)
-mkdir -p $ISO_DIR/boot
-cp $OUTPUT_DIR/vmlinuz-$KERNEL_VERSION $ISO_DIR/boot/vmlinuz
-cp $OUTPUT_DIR/initrd.img-$KERNEL_VERSION $ISO_DIR/boot/initrd.img
-
-xorriso -as mkisofs \
-   -o ztos.iso \
+	xorriso -as mkisofs \
+	   -o ztos.iso \
    -b boot/vmlinuz \
    -c boot/initrd.img \
    $ISO_DIR/
 
-echo "Build Complete!"
-
+	echo "Build Complete!"
 
 ## Conclusion
 
