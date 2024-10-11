@@ -27,7 +27,26 @@ ZTOS is currently under active development. The repository includes the initial 
 
 1. Clone the repository:
 
-   ```bash
    git clone https://github.com/c3aero/ztos.git
    cd ztos
+
+2. Build the ZTOS kernel:
+
+   Follow the instructions in **`docs/build-instructions.md`** to build the ZTOS kernel, create the initrd, and prepare the system for deployment.
+
+3. Boot into ZTOS:
+
+   Use iPXE to boot into ZTOS in your desired environment. Detailed instructions are available in **`docs/ipxe-boot-guide.md`** for AWS, Equinix Metal, and on-prem hardware.
+
+4. Set up Network Services:
+
+   Once ZTOS is booted, use Docker or Podman to run containerized services such as **BGP**, **WireGuard**, and **MACsec**. See **`docs/container-setup.md`** for more details on how to set up and run these services.
+
+## Contributing
+
+We welcome contributions from the community! Please feel free to submit pull requests or report issues. For major changes, please open an issue first to discuss what you would like to change.
+
+## License
+
+ZTOS is currently proprietary and licensed for internal use only by **C3Aero Group Inc.**. Please contact us for more information regarding usage and contributions.
 
