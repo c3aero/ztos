@@ -34,14 +34,17 @@ docker build -t ztos-bgp .
 ### Steps:
 
 1. Build the WireGuard container:
-```bash cd containers/wireguard
+	```bash 
+	cd containers/wireguard
 docker build -t ztos-wireguard . 
 
 2. Run the WireGuard container:
-```bash docker run -d --name ztos-wireguard -v $(pwd)/wg0.conf:/etc/wireguard/wg0.conf ztos-wireguard 
+	```bash 
+	docker run -d --name ztos-wireguard -v $(pwd)/wg0.conf:/etc/wireguard/wg0.conf ztos-wireguard 
 
 3. Verify the WireGuard service is running:
-```bash docker exec -it ztos-wireguard wg show 
+	```bash 
+	docker exec -it ztos-wireguard wg show 
 
 4. (Optional) You can update the `wg0.conf` file in the `containers/wireguard/` directory for different peer configurations.
 
