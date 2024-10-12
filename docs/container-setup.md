@@ -12,7 +12,7 @@ This guide provides detailed instructions on how to set up and run the core netw
 
 1. Build the BGP container:
 	```bash 
-cd containers/bgp
+	cd containers/bgp
 	docker build -t ztos-bgp . 
 
 2. Run the BGP container:
