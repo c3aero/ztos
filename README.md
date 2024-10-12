@@ -8,12 +8,13 @@
 - **Custom Linux Distribution**: Networking-focused OS, optimized for routing and security services.
 - **Multi-Layer Encryption**: Layer 2 encryption with **MACsec** and Layer 3 encryption with **WireGuard**.
 - **Containerized Network Services**: Modular and scalable services such as **BGP**, **WireGuard**, and **MACsec**.
+- **GPU Offload for Packet Processing**: Use NVIDIA GPUs to accelerate pre-routing and post-routing network tasks such as encryption and filtering.
 - **Zero Trust Networking**: Continuous authentication and least-privilege access to all network resources.
 - **Multi-Tenant Support**: Fully isolated VRFs and VXLANs for traffic segmentation.
 
 ## Project Status
 
-ZTOS is currently under active development. The repository includes the initial architecture design, boot process configurations, and containerized network services.
+ZTOS is currently under active development. The repository includes the initial architecture design, boot process configurations, and containerized network services. GPU offload capabilities have been introduced for optimizing network packet processing.
 
 ## Installation and Usage
 
@@ -22,12 +23,12 @@ ZTOS is currently under active development. The repository includes the initial 
 - **iPXE** for network booting
 - **Docker** or **Podman** for containerized services
 - Access to **AWS**, **Equinix Metal**, or on-prem hardware
+- **NVIDIA GPU and CUDA Toolkit** for GPU offload
 
 ### Quick Start
 
 1. Clone the repository:
 
-	```bash
    git clone https://github.com/c3aero/ztos.git
    cd ztos
 
@@ -35,19 +36,19 @@ ZTOS is currently under active development. The repository includes the initial 
 
    Follow the instructions in **`docs/build-instructions.md`** to build the ZTOS kernel, create the initrd, and prepare the system for deployment.
 
-3. Boot into ZTOS:
+3. Set up GPU offload:
+
+   - Build the Docker container for GPU offload:
+     ```bash
+     cd containers/gpu-offload
+     docker build -t ztos-gpu-offload .
+     ```
+
+   - Configure iptables to mark packets for GPU processing:
+     ```bash
+     ./scripts/iptables-gpu-offload.sh
+     ```
+
+4. Boot into ZTOS:
 
    Use iPXE to boot into ZTOS in your desired environment. Detailed instructions are available in **`docs/ipxe-boot-guide.md`** for AWS, Equinix Metal, and on-prem hardware.
-
-4. Set up Network Services:
-
-   Once ZTOS is booted, use Docker or Podman to run containerized services such as **BGP**, **WireGuard**, and **MACsec**. See **`docs/container-setup.md`** for more details on how to set up and run these services.
-
-## Contributing
-
-We welcome contributions from the community! Please feel free to submit pull requests or report issues. For major changes, please open an issue first to discuss what you would like to change.
-
-## License
-
-ZTOS is currently proprietary and licensed for internal use only by **C3Aero Group Inc.**. Please contact us for more information regarding usage and contributions.
-
