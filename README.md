@@ -14,16 +14,14 @@
 - **Comprehensive Management**: API, Web Interface, and CLI management containers.
 - **Monitoring and System Health**: Monitor system and container health via an API for real-time stats.
 
-## Project Status
+## Build and Installation
 
-ZTOS is currently under active development. The repository includes the initial architecture design, boot process configurations, and containerized network services for deployment.
-
-## Installation and Usage
+Follow the steps below to build the ZTOS kernel, create the initrd, and package everything for deployment. After the OS is built, use the provided documentation to configure network services and management containers.
 
 ### Prerequisites
 
 - **iPXE** for network booting.
-- **Docker** or **Podman** for containerized services.
+- **Docker** for containerized services.
 - Access to **AWS**, **Equinix Metal**, or on-prem hardware.
 
 ### Quick Start
@@ -35,47 +33,21 @@ ZTOS is currently under active development. The repository includes the initial 
     cd ztos
     ```
 
-2. Build the network service containers:
+2. Build the ZTOS OS:
 
-    ```bash
-    # Build BGP container
-    cd containers/bgp
-    docker build -t ztos-bgp .
+    Follow the instructions in the [Build Instructions](./docs/build-instructions.md) to build the kernel, create the initrd, and package the OS for iPXE booting or ISO creation.
 
-    # Build WireGuard container
-    cd containers/wireguard
-    docker build -t ztos-wireguard .
+3. Configure Docker and Containers:
 
-    # Build MACsec container
-    cd containers/macsec
-    docker build -t ztos-macsec .
+    Once the OS is built, configure **Docker** and containerized services such as **BGP**, **WireGuard**, **MACsec**, and **GPU Offload**. Detailed setup instructions can be found in the [Container Setup Guide](./docs/container-setup.md).
 
-    # Build GPU Offload container
-    cd containers/gpu-offload
-    docker build -t ztos-gpu-offload .
-    ```
-
-3. Build the management containers:
-
-    ```bash
-    # Build API container
-    cd containers/api
-    docker build -t ztos-api .
-
-    # Build Web Interface container
-    cd containers/web
-    docker build -t ztos-web .
-
-    # Build CLI container
-    cd containers/cli
-    docker build -t ztos-cli .
-    ```
-
-4. Run the system setup script to enable Docker services and start the containers:
+4. Run the system setup script:
 
     ```bash
     ./scripts/setup-systemd.sh
     ```
+
+    This script will configure Docker and set up services to start automatically.
 
 5. Use Docker Compose to start all services:
 
@@ -83,24 +55,13 @@ ZTOS is currently under active development. The repository includes the initial 
     sudo systemctl start ztos-containers
     ```
 
-6. Access the management interfaces:
+## Documentation
 
-    - **API**: `http://localhost:3000`
-    - **Web Interface**: `http://localhost:8080`
-    - **CLI**: Connect using Docker CLI or bash shell.
-
-## Monitoring and Health Checks
-
-ZTOS includes a monitoring API that provides system information, container health, and Docker service status.
-
-### Available Monitoring Endpoints
-
-- **System Information**: `/api/monitoring/system-info`
-- **Container Stats**: `/api/monitoring/container-stats`
-- **Container Health**: `/api/monitoring/container-health/:containerId`
-- **Docker Status**: `/api/monitoring/docker-status`
-
-Use these endpoints to retrieve real-time information on the state of your ZTOS system and containers.
+- [Build Instructions](./docs/build-instructions.md): Step-by-step guide to building the ZTOS kernel, initrd, and OS.
+- [Container Setup Guide](./docs/container-setup.md): Instructions to build and run the network service and management containers.
+- [Network Configuration](./docs/network-config.md): Information on configuring BGP, WireGuard, MACsec, VXLAN, and more.
+- [iPXE Boot Guide](./docs/ipxe-boot-guide.md): Guide for deploying ZTOS via iPXE in various environments like AWS, Equinix Metal, and on-prem hardware.
+- [Monitoring API](./docs/monitoring-api.md): Documentation on how to use the monitoring API to check system and container health.
 
 ## Contributing
 
