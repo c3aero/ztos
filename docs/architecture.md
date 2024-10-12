@@ -60,7 +60,6 @@ The **CLI** allows power users to interact with ZTOS for detailed configuration 
 
 Example usage:
 
-	```bash
 	ztos network configure --bgp --peer 10.1.1.1 --as 64512
 	ztos security status
 	ztos monitoring logs
@@ -75,7 +74,7 @@ The **API** provides programmatic control of ZTOS and can be used for automation
 - **Monitoring API**: Retrieve system metrics and logs.
 
 Example API routes:
-	```bash
+
 	POST /api/v1/network/configure   # Configure BGP, VXLAN, etc.
 	GET /api/v1/security/status      # Get the current security status (MACsec, WireGuard)
 	GET /api/v1/monitoring/logs      # Retrieve system logs
