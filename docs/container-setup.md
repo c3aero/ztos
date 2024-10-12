@@ -11,17 +11,14 @@ This guide provides detailed instructions on how to set up and run the core netw
 ### Steps:
 
 1. Build the BGP container:
-	```bash 
 	cd containers/bgp
 	docker build -t ztos-bgp . 
 
 2. Run the BGP container:
-	```bash 
 	docker run -d --name ztos-bgp -v $(pwd)/bgp.conf:/etc/frr/frr.conf ztos-bgp 
 
 3. Verify the BGP service is running:
-	```bash
-	 docker exec -it ztos-bgp vtysh -c "show ip bgp summary" 
+	docker exec -it ztos-bgp vtysh -c "show ip bgp summary" 
 
 4. (Optional) You can customize the `bgp.conf` file in the `containers/bgp/` directory to match your environment.
 
@@ -34,16 +31,13 @@ This guide provides detailed instructions on how to set up and run the core netw
 ### Steps:
 
 1. Build the WireGuard container:
-	```bash 
 	cd containers/wireguard
 	docker build -t ztos-wireguard . 
 
 2. Run the WireGuard container:
-	```bash 
 	docker run -d --name ztos-wireguard -v $(pwd)/wg0.conf:/etc/wireguard/wg0.conf ztos-wireguard 
 
 3. Verify the WireGuard service is running:
-	```bash 
 	docker exec -it ztos-wireguard wg show 
 
 4. (Optional) You can update the `wg0.conf` file in the `containers/wireguard/` directory for different peer configurations.
@@ -57,16 +51,13 @@ This guide provides detailed instructions on how to set up and run the core netw
 ### Steps:
 
 1. Build the MACsec container:
-	```bash 
 	cd containers/macsec
 	docker build -t ztos-macsec . 
 
 2. Run the MACsec container:
-	```bash 
 	docker run -d --name ztos-macsec -v $(pwd)/macsec.conf:/etc/macsec.conf ztos-macsec 
 
 3. Verify the MACsec service is running:
-	```bash 
 	docker exec -it ztos-macsec ip macsec show 
 
 4. (Optional) Update the `macsec.conf` file in the `containers/macsec/` directory to customize the MACsec configuration for your network.
@@ -80,20 +71,16 @@ This guide provides detailed instructions on how to set up and run the core netw
 ### Steps:
 
 1. Build the GPU offload container:
-	```bash 
 	cd containers/gpu-offload
 	docker build -t ztos-gpu-offload . 
 
 2. Run the GPU offload container:
-	```bash 
 	docker run --gpus all --network host --cap-add=NET_ADMIN ztos-gpu-offload 
 
 3. Configure iptables to mark packets for GPU processing:
-	```bash 
 	./scripts/iptables-gpu-offload.sh 
 
 4. Verify that packets are being processed by the GPU container by monitoring traffic:
-	```bash 
 	docker logs ztos-gpu-offload 
 
 ---
@@ -107,36 +94,53 @@ You can use Docker Compose to orchestrate multiple ZTOS services such as BGP, Wi
 1. Build the individual containers (BGP, WireGuard, MACsec, GPU Offload) as described in the earlier sections.
 2. Create a `docker-compose.yml` file with the following content:
    
-   ```bash 
-   version: '3'
-   services:
-     bgp:
-       image: ztos-bgp
-       networks:
-         - ztos-network
-     wireguard:
-       image: ztos-wireguard
-       networks:
-         - ztos-network
-       cap_add:
-         - NET_ADMIN
-       environment:
-         - PEER_PUBLIC_KEY=your-peer-key
-     macsec:
-       image: ztos-macsec
-       networks:
-         - ztos-network
-       cap_add:
-         - NET_ADMIN
-     gpu-offload:
-       image: ztos-gpu-offload
-       networks:
-         - ztos-network
-       gpus: all
-       environment:
-         - PACKET_DATA="Test packet for GPU processing"
-   networks:
-     ztos-network:
-       driver: bridge 
+	version: '3'
+	services:
+	  bgp:
+		image: ztos-bgp
+		networks:
+		  - ztos-network
+		  
+		  wireguard:
+		  image: ztos-wireguard
+		  networks:
+		  - ztos-network
+		  cap_add:
+		  - NET_ADMIN
+		  environment:
+		  - PEER_PUBLIC_KEY=your-peer-key
+		  
+		  macsec:
+		  image: ztos-macsec
+		  networks:
+		  - ztos-network
+		  cap_add:
+		  - NET_ADMIN
+		  
+		  gpu-offload:
+		  image: ztos-gpu-offload
+		  networks:
+		  - ztos-network
+		  gpus: all
+		  environment:
+		  - PACKET_DATA="Test packet for GPU processing"
+		  
+		  api:
+		  image: ztos-api
+		  networks:
+		  - ztos-network
+		  ports:
+		  - "3000:3000"
+		  
+		  web:
+		  image: ztos-web
+		  networks:
+		  - ztos-network
+		  ports:
+		  - "8080:8080"
+		  
+		  networks:
+		  ztos-network:
+		  driver: bridge
 
 3. Use `docker-compose up` to start all services and test their interoperability.
