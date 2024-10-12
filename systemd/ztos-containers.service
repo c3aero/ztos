@@ -1,0 +1,15 @@
+[Unit]
+Description=ZTOS Containers Service
+Requires=docker.service
+After=docker.service
+
+[Service]
+WorkingDirectory=/path/to/docker-compose-directory
+ExecStart=/usr/local/bin/docker-compose up
+ExecStop=/usr/local/bin/docker-compose down
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target
+

@@ -1,5 +1,4 @@
 version: '3'
-
 services:
   bgp:
     image: ztos-bgp
@@ -12,8 +11,6 @@ services:
       - ztos-network
     cap_add:
       - NET_ADMIN
-    environment:
-      - PEER_PUBLIC_KEY=your-peer-key
 
   macsec:
     image: ztos-macsec
@@ -27,10 +24,28 @@ services:
     networks:
       - ztos-network
     gpus: all
-    environment:
-      - PACKET_DATA="Test packet for GPU processing"
+
+  api:
+    image: ztos-api
+    networks:
+      - ztos-network
+    ports:
+      - "3000:3000"
+
+  web:
+    image: ztos-web
+    networks:
+      - ztos-network
+    ports:
+      - "8080:80"
+
+  cli:
+    image: ztos-cli
+    networks:
+      - ztos-network
+    cap_add:
+      - NET_ADMIN
 
 networks:
   ztos-network:
     driver: bridge
-

@@ -1,0 +1,13 @@
+[Unit]
+Description=Docker Application Container Engine
+Documentation=https://docs.docker.com
+After=network.target
+
+[Service]
+ExecStart=/usr/bin/dockerd -H unix://
+Restart=always
+RestartSec=10
+
+[Install]
+WantedBy=multi-user.target
+
