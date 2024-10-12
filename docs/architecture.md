@@ -1,96 +1,131 @@
 # ZTOS Architecture Overview
 
-This document provides a high-level overview of the architecture of ZTOS, focusing on the core components, the networking stack, and how the system integrates key technologies such as BGP, VXLAN, MACsec, WireGuard, and GPU offload for accelerated network processing.
+This document provides a high-level overview of the architecture of ZTOS, focusing on the core components, networking stack, and management interfaces (CLI, API, and Web interface). The system is designed to deliver secure, scalable, and flexible networking for Zero Trust environments.
 
 ---
 
 ## Core Components
 
-ZTOS is built around a core set of technologies that enable secure, scalable, and flexible networking for Zero Trust environments.
+ZTOS is built around key technologies that enable secure and scalable networking. These components include:
 
-### Key Features:
-
-1. **BGP/L2EVPN (VRF & VNI Management)**: BGP is used to manage dynamic routing between leaf and spine nodes, with EVPN extensions enabling Layer 2 services over a Layer 3 network. Each tenant is isolated using VRFs and VNIs.
-2. **WireGuard (Layer 3 Encryption)**: WireGuard is used to encrypt Layer 3 traffic between nodes, securing communication across the network.
-3. **VXLAN+MACsec (Layer 2 Overlay and Encryption)**: VXLAN enables Layer 2 overlays across a Layer 3 network, while MACsec provides encryption for Layer 2 traffic between leaf nodes.
-4. **GPU Offload for Network Processing**: NVIDIA GPUs are used to accelerate packet processing, such as encryption and filtering, via Docker containers.
+1. **BGP/L2EVPN (VRF & VNI Management)**: Used for dynamic routing and traffic segmentation across tenant networks.
+2. **WireGuard**: Provides Layer 3 encryption to secure communication between nodes.
+3. **VXLAN+MACsec**: VXLAN creates Layer 2 overlays for isolated tenant networks, and MACsec secures traffic at Layer 2.
+4. **GPU Offload**: NVIDIA GPUs are used to accelerate packet processing tasks like encryption and filtering.
 
 ---
 
-## Network Architecture
+## Directory Structure
 
-ZTOS's network architecture is designed to provide a high level of security and scalability, leveraging a mix of routing, encryption, and overlay technologies.
+The repository is structured to provide clear separation of the core components, management interfaces, and testing:
 
-### Network Layers:
+	```bash
+	├── api                  # API server and routes for programmatic control of ZTOS
+	│   ├── routes
+	│   │   ├── monitoring.js
+	│   │   ├── network.js
+	│   │   └── security.js
+	│   └── server.js        # Main API server
+	├── cli                  # Command Line Interface (CLI) commands for managing ZTOS
+	│   └── commands
+	│       ├── monitoring.sh
+	│       ├── network.sh
+	│       └── security.sh
+	├── containers           # Container configurations for key network services
+	│   ├── bgp
+	│   ├── gpu-offload
+	│   ├── macsec
+	│   └── wireguard
+	├── docs                 # Documentation
+	├── web                  # Web interface for managing ZTOS via a browser
+	│   ├── dashboard
+	│   ├── network-config
+	│   └── security
+	├── tests                # Test scripts for verifying functionality and security
+	├── ztos-config          # Configuration files for VRF, VNI, etc.
 
-1. **BGP/L2EVPN (VRF & VNI Management)** - Layer 3 Spine and VRF Gateway:
-   - BGP handles dynamic routing between the **Spine** and **Leaf** nodes.
-   - EVPN is used for extending Layer 2 services over the Layer 3 network.
-   - VRFs are employed to ensure tenant isolation, with VXLAN VNIs mapped to VLANs.
-
-2. **WireGuard (Layer 3 Underlay and Encryption)** - Layer 3 Spine to Leaf Encryption:
-   - WireGuard is used to encrypt Layer 3 traffic between nodes (spine and leaf).
-   - This layer ensures secure communication, encrypting data in transit across the network.
-
-3. **VXLAN + MACsec (Layer 2 Overlay and Encryption)** - Layer 2 Leaf to Leaf:
-   - VXLAN creates a Layer 2 overlay on top of the Layer 3 underlay, enabling isolated Layer 2 networks for each tenant.
-   - MACsec encrypts Layer 2 traffic, ensuring that the VXLAN encapsulated traffic remains secure as it traverses between nodes.
-
-4. **Bridge** - Layer 2 Customer Network and L3 Customer VRF:
-   - Traffic from the customer's Layer 2 network is bridged into the ZTOS network, with the bridge handling traffic between the customer’s Layer 2 network and their respective VRF.
-
----
-
-## GPU Offload for Pre/Postrouting Tasks
-
-ZTOS introduces GPU offload for accelerating complex network processing tasks such as encryption, deep packet inspection (DPI), and filtering.
-
-### GPU Offload Integration
-
-1. **Pre-routing Offload**:
-   - Packets are marked in the pre-routing chain for processing by the GPU offload container.
-   - The container uses **CUDA** to handle encryption and filtering tasks at scale, improving performance for high-throughput environments.
-
-2. **Post-routing Offload**:
-   - Post-routing tasks like Network Address Translation (NAT) and packet re-encryption are offloaded to the GPU, enhancing efficiency in traffic forwarding and processing.
-
-3. **GPU Offload Pipeline**:
-   ```bash 
-   iptables -t mangle -A PREROUTING -j MARK --set-mark 1
-   iptables -t nat -A POSTROUTING -m mark --mark 1 -j SNAT --to-source <GPU-processed-IP>
-   
 
 ---
 
-## Example Flow
+## Management Interfaces
 
-1. **Inbound Traffic**:
-   - Traffic enters the network and is first handled by **WireGuard**, which decrypts the Layer 3 encrypted traffic.
-   - Traffic is then routed through the **BGP** routing system, where routing decisions are made based on the destination VRF.
+ZTOS can be managed using multiple interfaces:
 
-2. **VXLAN and MACsec**:
-   - The decrypted traffic is encapsulated within a **VXLAN** tunnel to provide Layer 2 services across the Layer 3 backbone.
-   - **MACsec** encrypts the VXLAN traffic for secure traversal across the network.
+### 1. **Command Line Interface (CLI)**
 
-3. **GPU Offload**:
-   - Depending on the **iptables** rules, packets can be offloaded to the GPU for processing, enhancing the efficiency of encryption, filtering, or deep packet inspection.
+The **CLI** allows power users to interact with ZTOS for detailed configuration and management tasks. Each command focuses on a specific aspect of the system, such as network configuration, security status, and monitoring.
+
+- **Network Configuration**: Configure BGP, WireGuard, and VXLAN.
+- **Security Management**: Enable/disable MACsec, manage WireGuard peers.
+- **Monitoring**: Pull real-time logs and performance metrics.
+
+Example usage:
+	```bash
+	ztos network configure --bgp --peer 10.1.1.1 --as 64512
+	ztos security status
+	ztos monitoring logs
+
+
+### 2. **RESTful API**
+
+The **API** provides programmatic control of ZTOS and can be used for automation, monitoring, and integration with other systems (e.g., SIEM, SOC).
+
+- **Network API**: Configure network services like BGP, VXLAN, and WireGuard.
+- **Security API**: Manage encryption services such as MACsec and WireGuard.
+- **Monitoring API**: Retrieve system metrics and logs.
+
+Example API routes:
+	```bash
+	POST /api/v1/network/configure   # Configure BGP, VXLAN, etc.
+	GET /api/v1/security/status      # Get the current security status (MACsec, WireGuard)
+	GET /api/v1/monitoring/logs      # Retrieve system logs
+
+
+### 3. **Web Interface**
+
+The **Web Interface** is designed for users who prefer a graphical interface. It allows for easy configuration and monitoring of ZTOS through a browser, and integrates with performance monitoring tools like Grafana.
+
+- **Dashboard**: Overview of network health and performance metrics.
+- **Network Configuration**: GUI for setting up BGP peers, WireGuard, and VXLAN tunnels.
+- **Security Visualization**: Real-time view of encryption status (MACsec, WireGuard) and key management.
 
 ---
 
-## Deployment and Scalability
+## Network Stack Overview
 
-ZTOS is designed to scale across cloud, hybrid, and on-premises environments. By using containerized network services and GPU acceleration, ZTOS can dynamically adjust to the needs of different environments.
+The ZTOS network stack is built around the following core components:
 
-### Example Deployment Models:
+### 1. **BGP/L2EVPN (VRF & VNI Management)**
+- BGP handles dynamic Layer 3 routing between nodes.
+- EVPN enables Layer 2 services over the Layer 3 network.
+- VRFs and VNIs are used for tenant isolation and traffic segmentation.
 
-1. **Cloud Deployment (AWS, Equinix Metal)**:
-   - ZTOS is deployed using iPXE to provision bare-metal or virtual machines in the cloud. The GPU offload containers can run in cloud environments equipped with GPUs.
+### 2. **WireGuard (Layer 3 Encryption)**
+- WireGuard provides Layer 3 encryption for secure communication between nodes.
+- Encrypted traffic traverses the network over VXLAN tunnels.
 
-2. **On-Premises Deployment**:
-   - ZTOS can be deployed on physical hardware, with iPXE used to boot into ZTOS. The system can leverage on-prem GPUs for offload tasks.
+### 3. **VXLAN + MACsec (Layer 2 Overlay + Encryption)**
+- VXLAN creates Layer 2 overlays, allowing isolated tenant networks over a shared Layer 3 infrastructure.
+- MACsec provides Layer 2 encryption, securing traffic between leaf nodes in the network.
+
+### 4. **GPU Offload for Network Processing**
+- NVIDIA GPUs are used to accelerate network processing tasks such as packet encryption, deep packet inspection, and filtering.
+- GPU offloading helps maintain high performance and low latency for encryption and security-related tasks.
+
+---
+
+## Testing and Security Validation
+
+### 1. **Security Tests**
+- **WireGuard**: `wireguard-test.sh` ensures that WireGuard peers are configured and functioning securely.
+- **MACsec**: `macsec-test.sh` verifies MACsec encryption between nodes.
+
+### 2. **Network Tests**
+- **VXLAN**: `vxlan-test.sh` tests the functionality of VXLAN tunnels and traffic flow across the network.
+- **GPU Offload**: `gpu-offload-test.sh` and `gpu-offload-benchmark.sh` verify the functionality and performance of GPU-accelerated network processing.
 
 ---
 
 ## Conclusion
 
-ZTOS combines traditional network technologies like BGP and VXLAN with modern security practices like WireGuard and MACsec, while using cutting-edge GPU acceleration for packet processing. This architecture allows ZTOS to provide a secure, scalable, and high-performance network for Zero Trust environments.
+ZTOS combines traditional networking technologies like BGP, VXLAN, and MACsec with modern tools like WireGuard and GPU offloading to create a secure, scalable, and high-performance network stack. The system can be managed via CLI, API, or Web Interface, making it accessible to a wide range of users and industries, including Aerospace, Defense, Finance, and Government.
