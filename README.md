@@ -14,54 +14,73 @@
 - **Comprehensive Management**: API, Web Interface, and CLI management containers.
 - **Monitoring and System Health**: Monitor system and container health via an API for real-time stats.
 
-## Build and Installation
+## Project Status
 
-Follow the steps below to build the ZTOS kernel, create the initrd, and package everything for deployment. After the OS is built, use the provided documentation to configure network services and management containers.
+ZTOS is currently under active development. The repository includes the initial architecture design, boot process configurations, and containerized network services for deployment.
+
+## Installation and Build Process
+
+Follow the steps below to build the ZTOS kernel, create the initrd, package the root filesystem, and install Docker to orchestrate the services. After the OS is built, use the provided documentation to configure network services and management containers.
 
 ### Prerequisites
 
-- **iPXE** for network booting.
-- **Docker** for containerized services.
-- Access to **AWS**, **Equinix Metal**, or on-prem hardware.
+- **Debootstrap** for root filesystem creation.
+- **iPXE** for network booting, or tools to create an ISO for booting.
+- **Docker** or **Podman** for containerized services.
+- Access to **AWS**, **Equinix Metal**, or on-prem hardware for deployment.
 
 ### Quick Start
 
-1. Clone the repository:
-
+1. **Clone the repository**:
     ```bash
     git clone https://github.com/c3aero/ztos.git
     cd ztos
     ```
 
-2. Build the ZTOS OS:
-
-    Follow the instructions in the [Build Instructions](./docs/build-instructions.md) to build the kernel, create the initrd, and package the OS for iPXE booting or ISO creation.
-
-3. Configure Docker and Containers:
-
-    Once the OS is built, configure **Docker** and containerized services such as **BGP**, **WireGuard**, **MACsec**, and **GPU Offload**. Detailed setup instructions can be found in the [Container Setup Guide](./docs/container-setup.md).
-
-4. Run the system setup script:
-
+2. **Build the kernel, initrd, and root filesystem**:
+    - Run the **build script** to compile the kernel, generate the initrd, and create the root filesystem:
     ```bash
-    ./scripts/setup-systemd.sh
+    cd build
+    ./build-rootfs.sh
+    ```
+    - This will generate the **kernel**, **initrd**, and **root filesystem** in the `output/` directory.
+
+3. **Boot the ZTOS Host**:
+    - Use **iPXE** or an ISO to boot the system with the generated kernel, initrd, and root filesystem. Refer to `ipxe-boot-guide.md` for instructions.
+
+4. **Set up Docker and services on the ZTOS Host**:
+    - Once the system is booted, run the **host setup script** to install Docker, build the containers, and configure services:
+    ```bash
+    cd /path/to/ztos
+    ./scripts/ztos-host-setup.sh
     ```
 
-    This script will configure Docker and set up services to start automatically.
+5. **Access the Web Interface**:
+    - Once Docker and the containers are running, access the ZTOS Web Interface at `http://localhost:8080`.
 
-5. Use Docker Compose to start all services:
+## Booting via iPXE or ISO
 
-    ```bash
-    sudo systemctl start ztos-containers
-    ```
+Refer to the **`ipxe-boot-guide.md`** document for step-by-step instructions on booting ZTOS using iPXE or an ISO. This document covers:
+- **AWS** deployment with iPXE.
+- **Equinix Metal** deployment.
+- **On-prem hardware** boot process.
 
-## Documentation
+## Network Configuration
 
-- [Build Instructions](./docs/build-instructions.md): Step-by-step guide to building the ZTOS kernel, initrd, and OS.
-- [Container Setup Guide](./docs/container-setup.md): Instructions to build and run the network service and management containers.
-- [Network Configuration](./docs/network-config.md): Information on configuring BGP, WireGuard, MACsec, VXLAN, and more.
-- [iPXE Boot Guide](./docs/ipxe-boot-guide.md): Guide for deploying ZTOS via iPXE in various environments like AWS, Equinix Metal, and on-prem hardware.
-- [Monitoring API](./docs/monitoring-api.md): Documentation on how to use the monitoring API to check system and container health.
+ZTOS includes network services such as **BGP**, **WireGuard**, **MACsec**, and **VXLAN**. Refer to **`network-config.md`** for detailed instructions on configuring the networking stack.
+
+## Monitoring and Health Checks
+
+ZTOS includes a monitoring API that provides system information, container health, and Docker service status.
+
+### Available Monitoring Endpoints
+
+- **System Information**: `/api/monitoring/system-info`
+- **Container Stats**: `/api/monitoring/container-stats`
+- **Container Health**: `/api/monitoring/container-health/:containerId`
+- **Docker Status**: `/api/monitoring/docker-status`
+
+Use these endpoints to retrieve real-time information on the state of your ZTOS system and containers.
 
 ## Contributing
 
