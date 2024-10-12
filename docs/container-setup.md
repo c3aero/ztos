@@ -11,14 +11,17 @@ This guide provides detailed instructions on how to set up and run the core netw
 ### Steps:
 
 1. Build the BGP container:
-```bash cd containers/bgp
+	```bash 
+	cd containers/bgp
 docker build -t ztos-bgp . 
 
 2. Run the BGP container:
-```bash docker run -d --name ztos-bgp -v $(pwd)/bgp.conf:/etc/frr/frr.conf ztos-bgp 
+	```bash 
+	docker run -d --name ztos-bgp -v $(pwd)/bgp.conf:/etc/frr/frr.conf ztos-bgp 
 
 3. Verify the BGP service is running:
-```bash docker exec -it ztos-bgp vtysh -c "show ip bgp summary" 
+	```bash 
+	docker exec -it ztos-bgp vtysh -c "show ip bgp summary" 
 
 4. (Optional) You can customize the `bgp.conf` file in the `containers/bgp/` directory to match your environment.
 
@@ -51,14 +54,17 @@ docker build -t ztos-wireguard .
 ### Steps:
 
 1. Build the MACsec container:
-```bash cd containers/macsec
+	```bash 
+	cd containers/macsec
 docker build -t ztos-macsec . 
 
 2. Run the MACsec container:
-```bash docker run -d --name ztos-macsec -v $(pwd)/macsec.conf:/etc/macsec.conf ztos-macsec 
+	```bash 
+	docker run -d --name ztos-macsec -v $(pwd)/macsec.conf:/etc/macsec.conf ztos-macsec 
 
 3. Verify the MACsec service is running:
-```bash docker exec -it ztos-macsec ip macsec show 
+	```bash 
+	docker exec -it ztos-macsec ip macsec show 
 
 4. (Optional) Update the `macsec.conf` file in the `containers/macsec/` directory to customize the MACsec configuration for your network.
 
@@ -71,14 +77,15 @@ While VXLAN can be configured directly on the host machine, you may also choose 
 ### Steps:
 
 1. Build the VXLAN container:
-```bash cd containers/vxlan
-docker build -t ztos-vxlan . 
+	```bash
+	cd containers/vxlan
+	docker build -t ztos-vxlan . 
 
 2. Run the VXLAN container:
-```bash docker run -d --name ztos-vxlan -v $(pwd)/vxlan.conf:/etc/vxlan.conf ztos-vxlan 
+	```bash docker run -d --name ztos-vxlan -v $(pwd)/vxlan.conf:/etc/vxlan.conf ztos-vxlan 
 
 3. Verify the VXLAN service is running:
-```bash docker exec -it ztos-vxlan cat /etc/vxlan.conf 
+	```bash docker exec -it ztos-vxlan cat /etc/vxlan.conf 
 
 ---
 
@@ -89,17 +96,17 @@ docker build -t ztos-vxlan .
 ### Steps:
 
 1. Build the GPU offload container:
-```bash cd containers/gpu-offload
-docker build -t ztos-gpu-offload . 
+	```bash cd containers/gpu-offload
+	docker build -t ztos-gpu-offload . 
 
 2. Run the GPU offload container:
-```bash docker run --gpus all --network host --cap-add=NET_ADMIN ztos-gpu-offload 
+	```bash docker run --gpus all --network host --cap-add=NET_ADMIN ztos-gpu-offload 
 
 3. Configure iptables to mark packets for GPU processing:
-```bash ./scripts/iptables-gpu-offload.sh 
+	```bash ./scripts/iptables-gpu-offload.sh 
 
 4. Verify that packets are being processed by the GPU container by monitoring traffic:
-```bash docker logs ztos-gpu-offload 
+	```bash docker logs ztos-gpu-offload 
 
 ---
 
