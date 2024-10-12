@@ -16,8 +16,8 @@ This guide explains how to use iPXE to boot ZTOS in different environments, incl
 
 	```bash
 	#!ipxe  
-	kernel https://ipxe.c3aero.net/kernel boot=zfs root=https://ipxe.c3aero.net/root.img  
-	initrd https://ipxe.c3aero.net/initrd.img  
+	kernel https://ipxe.example.com/kernel boot=zfs root=https://ipxe.example.com/root.img  
+	initrd https://ipxe.example.com/initrd.img  
 	boot
 
 3. Ensure the EC2 instance has access to the internet and the above URLs are reachable. ZTOS will load automatically once the script is executed.
@@ -30,8 +30,8 @@ This guide explains how to use iPXE to boot ZTOS in different environments, incl
 
 	```bash
 	#!ipxe  
-	kernel https://ipxe.c3aero.net/kernel boot=zfs root=https://ipxe.c3aero.net/root.img  
-	initrd https://ipxe.c3aero.net/initrd.img  
+	kernel https://ipxe.example.com/kernel boot=zfs root=https://ipxe.example.com/root.img  
+	initrd https://ipxe.example.com/initrd.img  
 	boot
 
 4. Boot the Equinix Metal server, and ZTOS will automatically load using the provided kernel and initrd.
@@ -44,8 +44,8 @@ This guide explains how to use iPXE to boot ZTOS in different environments, incl
 
 	```bash
 	#!ipxe  
-	kernel https://ipxe.c3aero.net/kernel boot=zfs root=https://ipxe.c3aero.net/root.img  
-	initrd https://ipxe.c3aero.net/initrd.img  
+	kernel https://ipxe.example.com/kernel boot=zfs root=https://ipxe.example.com/root.img  
+	initrd https://ipxe.example.com/initrd.img  
 	boot
 
 4. Ensure that the machine can reach the internet, and ZTOS will boot automatically.
