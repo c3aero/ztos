@@ -99,17 +99,21 @@ While VXLAN can be configured directly on the host machine, you may also choose 
 ### Steps:
 
 1. Build the GPU offload container:
-	```bash cd containers/gpu-offload
+	```bash 
+	cd containers/gpu-offload
 	docker build -t ztos-gpu-offload . 
 
 2. Run the GPU offload container:
-	```bash docker run --gpus all --network host --cap-add=NET_ADMIN ztos-gpu-offload 
+	```bash 
+	docker run --gpus all --network host --cap-add=NET_ADMIN ztos-gpu-offload 
 
 3. Configure iptables to mark packets for GPU processing:
-	```bash ./scripts/iptables-gpu-offload.sh 
+	```bash 
+	./scripts/iptables-gpu-offload.sh 
 
 4. Verify that packets are being processed by the GPU container by monitoring traffic:
-	```bash docker logs ztos-gpu-offload 
+	```bash 
+	docker logs ztos-gpu-offload 
 
 ---
 
