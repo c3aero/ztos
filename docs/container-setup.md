@@ -85,10 +85,12 @@ While VXLAN can be configured directly on the host machine, you may also choose 
 	docker build -t ztos-vxlan . 
 
 2. Run the VXLAN container:
-	```bash docker run -d --name ztos-vxlan -v $(pwd)/vxlan.conf:/etc/vxlan.conf ztos-vxlan 
+	```bash 
+	docker run -d --name ztos-vxlan -v $(pwd)/vxlan.conf:/etc/vxlan.conf ztos-vxlan 
 
 3. Verify the VXLAN service is running:
-	```bash docker exec -it ztos-vxlan cat /etc/vxlan.conf 
+	```bash 
+	docker exec -it ztos-vxlan cat /etc/vxlan.conf 
 
 ---
 
