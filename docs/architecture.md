@@ -19,7 +19,6 @@ ZTOS is built around key technologies that enable secure and scalable networking
 
 The repository is structured to provide clear separation of the core components, management interfaces, and testing:
 
-	```bash
 	├── api                  # API server and routes for programmatic control of ZTOS
 	│   ├── routes
 	│   │   ├── monitoring.js
@@ -60,6 +59,7 @@ The **CLI** allows power users to interact with ZTOS for detailed configuration 
 - **Monitoring**: Pull real-time logs and performance metrics.
 
 Example usage:
+
 	```bash
 	ztos network configure --bgp --peer 10.1.1.1 --as 64512
 	ztos security status
