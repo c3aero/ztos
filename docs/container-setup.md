@@ -12,16 +12,16 @@ This guide provides detailed instructions on how to set up and run the core netw
 
 1. Build the BGP container:
 	```bash 
-	cd containers/bgp
-docker build -t ztos-bgp . 
+cd containers/bgp
+	docker build -t ztos-bgp . 
 
 2. Run the BGP container:
 	```bash 
 	docker run -d --name ztos-bgp -v $(pwd)/bgp.conf:/etc/frr/frr.conf ztos-bgp 
 
 3. Verify the BGP service is running:
-	```bash 
-	docker exec -it ztos-bgp vtysh -c "show ip bgp summary" 
+	```bash
+	 docker exec -it ztos-bgp vtysh -c "show ip bgp summary" 
 
 4. (Optional) You can customize the `bgp.conf` file in the `containers/bgp/` directory to match your environment.
 
@@ -36,7 +36,7 @@ docker build -t ztos-bgp .
 1. Build the WireGuard container:
 	```bash 
 	cd containers/wireguard
-docker build -t ztos-wireguard . 
+	docker build -t ztos-wireguard . 
 
 2. Run the WireGuard container:
 	```bash 
@@ -59,7 +59,7 @@ docker build -t ztos-wireguard .
 1. Build the MACsec container:
 	```bash 
 	cd containers/macsec
-docker build -t ztos-macsec . 
+	docker build -t ztos-macsec . 
 
 2. Run the MACsec container:
 	```bash 
@@ -73,28 +73,7 @@ docker build -t ztos-macsec .
 
 ---
 
-## 4. VXLAN Service (Optional)
-
-While VXLAN can be configured directly on the host machine, you may also choose to containerize VXLAN services.
-
-### Steps:
-
-1. Build the VXLAN container:
-	```bash
-	cd containers/vxlan
-	docker build -t ztos-vxlan . 
-
-2. Run the VXLAN container:
-	```bash 
-	docker run -d --name ztos-vxlan -v $(pwd)/vxlan.conf:/etc/vxlan.conf ztos-vxlan 
-
-3. Verify the VXLAN service is running:
-	```bash 
-	docker exec -it ztos-vxlan cat /etc/vxlan.conf 
-
----
-
-## 5. GPU Offload Service
+## 4. GPU Offload Service
 
 **GPU Offload** is used to accelerate network processing tasks like encryption, filtering, and DPI using NVIDIA GPUs. The GPU offload container can be built and run as follows.
 
@@ -119,6 +98,45 @@ While VXLAN can be configured directly on the host machine, you may also choose 
 
 ---
 
-## Conclusion
+## 5. Container Orchestration with Docker Compose
 
-This guide outlines how to set up and run the core networking services in ZTOS using Docker containers. Each service (BGP, WireGuard, MACsec, VXLAN, GPU Offload) is containerized for easy deployment, portability, and scalability. You can modify each configuration file (`bgp.conf`, `wg0.conf`, `macsec.conf`, `vxlan.conf`) as needed to suit your specific network environment.
+You can use Docker Compose to orchestrate multiple ZTOS services such as BGP, WireGuard, MACsec, and GPU Offload. This simplifies the deployment and integration of different services.
+
+### Steps:
+
+1. Build the individual containers (BGP, WireGuard, MACsec, GPU Offload) as described in the earlier sections.
+2. Create a `docker-compose.yml` file with the following content:
+   
+   ```bash 
+   version: '3'
+   services:
+     bgp:
+       image: ztos-bgp
+       networks:
+         - ztos-network
+     wireguard:
+       image: ztos-wireguard
+       networks:
+         - ztos-network
+       cap_add:
+         - NET_ADMIN
+       environment:
+         - PEER_PUBLIC_KEY=your-peer-key
+     macsec:
+       image: ztos-macsec
+       networks:
+         - ztos-network
+       cap_add:
+         - NET_ADMIN
+     gpu-offload:
+       image: ztos-gpu-offload
+       networks:
+         - ztos-network
+       gpus: all
+       environment:
+         - PACKET_DATA="Test packet for GPU processing"
+   networks:
+     ztos-network:
+       driver: bridge 
+
+3. Use `docker-compose up` to start all services and test their interoperability.

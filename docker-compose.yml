@@ -1,0 +1,36 @@
+version: '3'
+
+services:
+  bgp:
+    image: ztos-bgp
+    networks:
+      - ztos-network
+
+  wireguard:
+    image: ztos-wireguard
+    networks:
+      - ztos-network
+    cap_add:
+      - NET_ADMIN
+    environment:
+      - PEER_PUBLIC_KEY=your-peer-key
+
+  macsec:
+    image: ztos-macsec
+    networks:
+      - ztos-network
+    cap_add:
+      - NET_ADMIN
+
+  gpu-offload:
+    image: ztos-gpu-offload
+    networks:
+      - ztos-network
+    gpus: all
+    environment:
+      - PACKET_DATA="Test packet for GPU processing"
+
+networks:
+  ztos-network:
+    driver: bridge
+
