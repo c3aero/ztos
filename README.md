@@ -118,7 +118,7 @@ Run tests:
 
 ## Contributions
 
-Contributions are welcome! Please submit pull requests or open issues on GitHub. For security concerns, email us at [security@ztos.com](mailto:security@ztos.com).
+Contributions are welcome! Please submit pull requests or open issues on GitHub. For security concerns, email us at [security@c3aero.com](mailto:security@c3aero.com).
 
 ---
 
