@@ -1,0 +1,32 @@
+{
+  "vrf_vni_mapping": [
+    {
+      "vrf_name": "tenant1",
+      "vni": 1001,
+      "description": "Tenant 1 VRF - Isolated Network",
+      "route_distinguisher": "64512:1",
+      "route_target_import": ["64512:1"],
+      "route_target_export": ["64512:1"],
+      "associated_vlan": 10
+    },
+    {
+      "vrf_name": "tenant2",
+      "vni": 1002,
+      "description": "Tenant 2 VRF - Isolated Network",
+      "route_distinguisher": "64512:2",
+      "route_target_import": ["64512:2"],
+      "route_target_export": ["64512:2"],
+      "associated_vlan": 20
+    },
+    {
+      "vrf_name": "tenant3",
+      "vni": 1003,
+      "description": "Tenant 3 VRF - Isolated Network",
+      "route_distinguisher": "64512:3",
+      "route_target_import": ["64512:3"],
+      "route_target_export": ["64512:3"],
+      "associated_vlan": 30
+    }
+  ]
+}
+
