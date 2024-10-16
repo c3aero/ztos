@@ -1,91 +1,125 @@
 # ZTOS (Zero Trust Operating System)
 
-**ZTOS** is a secure, scalable, and flexible operating system designed to implement **Zero Trust Networking** principles. It is deployable across cloud environments like **AWS**, hybrid infrastructures like **Equinix Metal**, and private on-premises hardware. ZTOS ensures multi-layer encryption, dynamic routing, and secure containerized network services for industries like Aerospace, Defense, Finance, and Government.
+**ZTOS** is a secure, scalable, and flexible operating system designed to implement **Zero Trust Networking** principles. It is deployable across cloud environments like **AWS**, hybrid infrastructures like **Equinix Metal**, and private on-premises hardware. ZTOS ensures multi-layer encryption, dynamic routing, and secure containerized network services for industries such as Aerospace, Defense, Finance, and Government.
 
 ## Key Features
 
+- **Zero Trust Networking**: Continuous authentication, least-privilege access, and end-to-end encryption for all services.
 - **iPXE Booting**: Zero-touch deployment into cloud or bare-metal environments.
 - **Custom Linux Distribution**: Networking-focused OS, optimized for routing and security services.
 - **Multi-Layer Encryption**: Layer 2 encryption with **MACsec** and Layer 3 encryption with **WireGuard**.
-- **Containerized Network Services**: Modular and scalable services such as **BGP**, **WireGuard**, and **MACsec**.
-- **GPU Offload**: Uses NVIDIA GPUs to accelerate network processing tasks like encryption and filtering.
-- **Zero Trust Networking**: Continuous authentication and least-privilege access to all network resources.
-- **Multi-Tenant Support**: Fully isolated VRFs and VXLANs for traffic segmentation.
-- **Comprehensive Management**: API, Web Interface, and CLI management containers.
-- **Monitoring and System Health**: Monitor system and container health via an API for real-time stats.
+- **GPU Offloading**: Leverages **NVIDIA GPUs** for accelerating network processing tasks like encryption and deep packet inspection.
+- **Containerized Services**: Modular and scalable services, including **BGP**, **WireGuard**, **MACsec**, and **API**.
+- **Real-Time Monitoring**: Integrated **Prometheus** and **Grafana** dashboards for system and container metrics.
+- **Centralized Logging**: Aggregated logs using **Fluentd** or **Elasticsearch** for all containerized services.
 
-## Project Status
-
-ZTOS is currently under active development. The repository includes the initial architecture design, boot process configurations, and containerized network services for deployment.
-
-## Installation and Build Process
-
-Follow the steps below to build the ZTOS kernel, create the initrd, package the root filesystem, and install Docker to orchestrate the services. After the OS is built, use the provided documentation to configure network services and management containers.
+## Getting Started
 
 ### Prerequisites
 
-- **Debootstrap** for root filesystem creation.
-- **iPXE** for network booting, or tools to create an ISO for booting.
-- **Docker** or **Podman** for containerized services.
-- Access to **AWS**, **Equinix Metal**, or on-prem hardware for deployment.
+- **iPXE** for network booting
+- **Docker** and **Docker Compose** for containerized services
+- Access to **AWS**, **Equinix Metal**, or on-prem hardware
+- **NVIDIA CUDA**-enabled GPUs for GPU offload functionality
 
-### Quick Start
+### Build and Installation
+
+ZTOS provides a fully automated build process to generate the root filesystem, kernel, and containers. Follow these steps to build and run ZTOS:
 
 1. **Clone the repository**:
-    ```bash
-    git clone https://github.com/c3aero/ztos.git
-    cd ztos
-    ```
+```
+git clone https://github.com/c3aero/ztos.git
+cd ztos
+```
 
-2. **Build the kernel, initrd, and root filesystem**:
-    - Run the **build script** to compile the kernel, generate the initrd, and create the root filesystem:
-    ```bash
-    cd build
-    ./build-rootfs.sh
-    ```
-    - This will generate the **kernel**, **initrd**, and **root filesystem** in the `output/` directory.
+2. **Build the ZTOS system**:
+   Run the build script to compile the kernel, create the root filesystem, and prepare the environment.
+```
+./build/build.sh
+```
 
-3. **Boot the ZTOS Host**:
-    - Use **iPXE** or an ISO to boot the system with the generated kernel, initrd, and root filesystem. Refer to `ipxe-boot-guide.md` for instructions.
+3. **Prepare the iPXE Boot Configuration**:
+   If you are deploying to AWS, Equinix Metal, or on-prem hardware, modify the appropriate `ipxe` configuration file in `/ipxe/configs/`. Example for AWS:
+```
+cp ipxe/configs/aws.ipxe /boot/
+```
 
-4. **Set up Docker and services on the ZTOS Host**:
-    - Once the system is booted, run the **host setup script** to install Docker, build the containers, and configure services:
-    ```bash
-    cd /path/to/ztos
-    ./scripts/ztos-host-setup.sh
-    ```
+4. **Configure and Run Containers**:
+   Use **Docker Compose** to run core ZTOS services like BGP, MACsec, WireGuard, and the Web UI.
+```
+docker-compose up
+```
 
-5. **Access the Web Interface**:
-    - Once Docker and the containers are running, access the ZTOS Web Interface at `http://localhost:8080`.
+### Key Components
 
-## Booting via iPXE or ISO
+#### **Core Containers**
 
-Refer to the **`ipxe-boot-guide.md`** document for step-by-step instructions on booting ZTOS using iPXE or an ISO. This document covers:
-- **AWS** deployment with iPXE.
-- **Equinix Metal** deployment.
-- **On-prem hardware** boot process.
+- **API Container** (`/containers/api`):
+  Manages all API calls for monitoring, networking, and security services. Exposes endpoints for RBAC and tenant management.
+  
+- **BGP Container** (`/containers/bgp`):
+  Handles dynamic routing between spine and leaf nodes using **FRR** or **Bird** for BGP services.
+  
+- **WireGuard Container** (`/containers/wireguard`):
+  Provides Layer 3 encryption using WireGuard for secure communication between tenant devices.
+  
+- **MACsec Container** (`/containers/macsec`):
+  Encrypts Layer 2 traffic using MACsec between spine and leaf nodes.
+  
+- **GPU Offload Container** (`/containers/gpu-offload`):
+  Offloads encryption and deep packet inspection to **NVIDIA GPUs** for accelerated performance.
 
-## Network Configuration
+#### **Web Interface**
 
-ZTOS includes network services such as **BGP**, **WireGuard**, **MACsec**, and **VXLAN**. Refer to **`network-config.md`** for detailed instructions on configuring the networking stack.
+- **Unified Dashboard** (`/containers/web`):
+  Provides both user-facing and admin functionality. Users can manage their services (e.g., VPN), while admins can control container orchestration, monitor system performance, and handle encryption key management.
+  
+  Access the web interface at `http://<your-server-ip>:3000`.
 
-## Monitoring and Health Checks
+#### **Monitoring and Logging**
 
-ZTOS includes a monitoring API that provides system information, container health, and Docker service status.
+- **Prometheus & Grafana**:
+  Monitor real-time performance and system health. Preconfigured dashboards are available in `/monitoring/grafana/ztos-dashboard.json`.
+  
+- **Centralized Logging**:
+  Logs are forwarded to `/logs/` directories for each service and can be centralized using **Fluentd** or **Elasticsearch**.
 
-### Available Monitoring Endpoints
+### Key Management
 
-- **System Information**: `/api/monitoring/system-info`
-- **Container Stats**: `/api/monitoring/container-stats`
-- **Container Health**: `/api/monitoring/container-health/:containerId`
-- **Docker Status**: `/api/monitoring/docker-status`
+ZTOS includes tools for managing encryption keys across services like **MACsec** and **WireGuard**:
+- Key rotation and revocation are automated through the API and Web UI.
+- **Security.js** handles RBAC and key exchange for tenants.
 
-Use these endpoints to retrieve real-time information on the state of your ZTOS system and containers.
+### Security Features
 
-## Contributing
+ZTOS adheres to strict **Zero Trust** principles:
+- **Role-Based Access Control (RBAC)**: Ensures that admins and users have minimal necessary privileges.
+- **AppArmor Profiles**: Each container has its own security profile to prevent unauthorized access.
+- **JWT/OAuth2 Authentication**: Used for user and API authentication.
 
-Contributions are welcome! Please open issues or submit pull requests for improvements or bug fixes.
+### Testing and Validation
 
-## License
+Tests are included to validate service functionality, security, and performance:
+- **Container Security Tests**: Validate that each container follows its security policies.
+- **Integration Tests**: Ensure that services like BGP and WireGuard work seamlessly together.
+- **Performance Benchmarks**: Test the performance of GPU offloading and encryption services under load.
 
-This project is licensed for internal use by **C3Aero Group Inc.**. Redistribution or external use is prohibited.
+Run tests:
+```
+./tests/network-tests/gpu-offload-test.sh
+./tests/security-tests/macsec-test.sh
+```
+
+## Future Plans
+
+- **Further integration of MDM (Mobile Device Management)**: Bringing Zero Trust principles to endpoint devices like mobile phones, laptops, etc.
+- **Expanded Client App**: An app to manage ZTOS connections and configurations on client devices (e.g., mobile VPN connections).
+- **Complete Zero-Touch Setup**: Automating tenant onboarding and service deployment.
+
+## Contributions
+
+Contributions are welcome! Please submit pull requests or open issues on GitHub. For security concerns, email us at [security@ztos.com](mailto:security@ztos.com).
+
+---
+
+ZTOS is currently under **active development**. Check back for updates as we continue to build out this platform for scalable, secure networking.
