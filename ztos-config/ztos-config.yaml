@@ -1,0 +1,115 @@
+# ZTOS Global Configuration
+
+system:
+  hostname: "ztos-node"
+  timezone: "UTC"
+  logging_level: "info"
+  max_log_size_mb: 100
+
+networking:
+  interfaces:
+    - name: "eth0"
+      description: "Primary network interface"
+      mtu: 1500
+      ipv4_address: "192.168.1.10/24"
+      ipv6_address: "2001:db8::10/64"
+      gateway: "192.168.1.1"
+    - name: "wg0"
+      description: "WireGuard VPN Interface"
+      mtu: 1420
+    - name: "vxlan0"
+      description: "VXLAN Tunnel Interface"
+      vni: 1001
+      mtu: 1412
+    - name: "macsec0"
+      description: "MACsec Secured Interface"
+      mtu: 1388
+
+  bgp:
+    asn: 64512
+    router_id: "192.168.1.10"
+    neighbors:
+      - address: "192.168.1.2"
+        remote_as: 64513
+        description: "Spine Node BGP Neighbor"
+
+  vxlan:
+    vni_mappings:
+      - vni: 1001
+        vlan: 10
+      - vni: 1002
+        vlan: 20
+    multicast_group: "239.0.0.1"
+
+  vrf:
+    vrf_vni_mapping_file: "/path/to/vrf-vni-mapping.json"
+
+  macsec:
+    key: "0123456789abcdef0123456789abcdef"
+    cipher_suite: "GCM-AES-128"
+
+security:
+  wireguard:
+    private_key: "your_private_key"
+    public_key: "peer_public_key"
+    listen_port: 51820
+    allowed_ips: ["10.0.0.2/32"]
+    endpoint: "192.168.1.2:51820"
+  
+  gpu_offload:
+    enable: true
+    processing_mode: "offload"  # Options: offload, inline
+    nfqueue_num: 0
+
+management:
+  api:
+    host: "0.0.0.0"
+    port: 8080
+    logging_level: "info"
+  web_interface:
+    enable: true
+    url: "http://localhost:8080/dashboard"
+  cli:
+    enable: true
+
+containers:
+  services:
+    - name: "bgp"
+      image: "ztos-bgp"
+      network: "host"
+      restart_policy: "always"
+    - name: "wireguard"
+      image: "ztos-wireguard"
+      network: "host"
+      restart_policy: "always"
+    - name: "macsec"
+      image: "ztos-macsec"
+      network: "host"
+      restart_policy: "always"
+    - name: "gpu-offload"
+      image: "ztos-gpu-offload"
+      network: "host"
+      restart_policy: "always"
+      gpus: "all"
+    - name: "api"
+      image: "ztos-api"
+      network: "host"
+      restart_policy: "always"
+    - name: "web"
+      image: "ztos-web"
+      network: "host"
+      restart_policy: "always"
+
+monitoring:
+  enable: true
+  prometheus_exporter:
+    host: "0.0.0.0"
+    port: 9090
+  grafana_dashboard_url: "http://localhost:3000"
+
+logging:
+  level: "info"
+  log_to_file: true
+  log_file: "/var/log/ztos.log"
+  max_log_size_mb: 100
+
