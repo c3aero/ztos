@@ -1,1 +1,22 @@
 [Unit]
+Description=ZTOS GPU Offload Service
+After=network.target docker.service
+Requires=docker.service
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+
+# Run the iptables script to mark packets for GPU offload
+ExecStart=/path/to/ztos/scripts/iptables-gpu-offload.sh
+
+# Start the GPU offload container using Docker
+ExecStart=/usr/bin/docker run --gpus all --network host --cap-add=NET_ADMIN --name ztos-gpu-offload ztos-gpu-offload
+
+# Ensure the container is stopped on service stop
+ExecStop=/usr/bin/docker stop ztos-gpu-offload
+ExecStop=/usr/bin/docker rm ztos-gpu-offload
+
+[Install]
+WantedBy=multi-user.target
+
