@@ -1,5 +1,3 @@
----
-
 ## **Patent Application for Zero Trust Overlay System (ZTOS)**
 
 ### **Title**
