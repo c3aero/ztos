@@ -47,7 +47,7 @@ ZTOS consists of several key components that work together to provide a **secure
 ##### **2.6 Automated Deployment and Zero-Touch Provisioning**
 
 - **Zero-Touch Deployment**: ZTOS features an automated deployment process that allows nodes and devices to be configured with minimal manual intervention. **Pre-provisioned configuration profiles** are stored in LDAP, and nodes automatically retrieve these profiles upon joining the network.
-- **Decentralized Management**: ZTOS does not rely on a central orchestration server; instead, it uses **decentralized protocols** such as **gossip** for node coordination, ensuring resilience similar to mission-critical systems like the nuclear football.
+- **Decentralized Management**: ZTOS does not rely on a central orchestration server; instead, it uses **decentralized protocols** such as **gossip** for node coordination, ensuring resilience similar to mission-critical systems.
 
 ##### **2.7 High Availability and Scalability**
 
